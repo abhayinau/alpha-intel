@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALPHA//INTEL</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#040709;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#DDE4EF;min-height:100vh;padding:16px}
+#modal{position:fixed;inset:0;background:#000d;display:flex;align-items:center;justify-content:center;z-index:999;padding:16px}
+.mbox{background:#0D1421;border:1px solid #1A3050;border-radius:12px;padding:28px;max-width:500px;width:100%}
+.mbox h2{color:#E8A020;font-family:monospace;font-size:13px;letter-spacing:.1em;margin-bottom:6px}
+.mbox p{color:#5A7080;font-size:13px;line-height:1.7;margin-bottom:14px}
+.mbox input{width:100%;background:#070B10;border:1px solid #1A2838;border-radius:6px;color:#DDE4EF;font-family:monospace;font-size:13px;padding:10px 12px;margin-bottom:10px}
+.mbox input:focus{outline:none;border-color:#E8A020}
+.mbox a{color:#E8A020}.opt{padding:14px;background:#060A0F;border:1px solid #1A2838;border-radius:8px;margin-bottom:10px}
+.opt-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.opt-t{font-family:monospace;font-size:11px;font-weight:700;color:#E8A020;letter-spacing:.08em}
+.opt-b{font-family:monospace;font-size:10px;padding:2px 7px;border-radius:4px}
+#app{max-width:1200px;margin:0 auto;display:none}
+.hdr{background:#0B1118;border:1px solid #1A2838;border-radius:10px 10px 0 0;padding:10px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.strip-wrap{overflow:hidden;border:1px solid #1A2838;border-top:0;background:#0B1118;height:24px}
+#strip{display:inline-flex;white-space:nowrap;font-size:11px;font-family:monospace;color:#1A2E40;line-height:24px;padding:0 16px;animation:scroll 45s linear infinite}
+.tabs{display:flex;background:#0B1118;border:1px solid #1A2838;border-top:0;flex-wrap:wrap}
+.tab{background:transparent;border:0;border-bottom:2px solid transparent;padding:9px 13px;font-family:monospace;font-size:11px;font-weight:700;letter-spacing:.07em;color:#4A5E72;cursor:pointer}
+.tab.on,.tab:hover{color:#E8A020}.tab.on{border-bottom-color:#E8A020}
+.body{background:#070B10;border:1px solid #1A2838;border-top:0;border-radius:0 0 10px 10px;padding:18px;min-height:520px}
+.panel{display:none}.panel.on{display:block}
+.card{background:#101820;border:1px solid #1A2838;border-radius:8px}
+.btn{padding:7px 15px;border-radius:6px;border:1px solid #E8A020;background:#E8A02018;color:#E8A020;font-size:11px;font-weight:700;cursor:pointer;font-family:monospace;letter-spacing:.07em}
+.btn:hover{background:#E8A02030}.btn:disabled{opacity:.38;cursor:not-allowed}
+.btn-sm{padding:4px 9px;border-radius:5px;border:1px solid #1A2838;background:transparent;color:#4A5E72;font-size:10px;font-weight:700;cursor:pointer;font-family:monospace}
+.btn-sm:hover,.btn-sm.on{border-color:#E8A020;color:#E8A020;background:#E8A02012}
+.btn-g{padding:6px 14px;border-radius:6px;border:1px solid #0EA47240;background:#0EA47218;color:#0EA472;font-size:11px;font-weight:700;cursor:pointer;font-family:monospace}
+.btn-g:hover{background:#0EA47230}.btn-g:disabled{opacity:.38;cursor:not-allowed}
+.ab{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 6px;border-radius:4px;font-family:monospace;white-space:nowrap}
+.ctx{width:100%;background:#060A0F;border:1px solid #1A2838;border-radius:6px;color:#8A9AB0;font-size:12px;font-family:monospace;padding:8px 10px;resize:vertical;min-height:72px;line-height:1.6}
+.ctx:focus{outline:none;border-color:#E8A02060}
+.data-bar{display:flex;gap:8px;flex-wrap:wrap;padding:8px 12px;background:#060A0F;border:1px solid #1A2838;border-radius:6px;margin-bottom:12px;align-items:center}
+.data-pill{font-size:10px;font-family:monospace;padding:3px 8px;border-radius:4px;font-weight:700}
+.pill-ok{background:#0EA47218;color:#0EA472;border:1px solid #0EA47235}
+.pill-err{background:#D93B3B18;color:#D93B3B;border:1px solid #D93B3B35}
+.pill-loading{background:#E8A02018;color:#E8A020;border:1px solid #E8A02035}
+@keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes fade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+.sp{animation:spin .9s linear infinite;display:inline-block}.fd{animation:fade .25s ease}
+</style>
+</head>
+<body>
+
+<div id="modal">
+<div class="mbox">
+  <h2>ALPHA//INTEL — SETUP</h2>
+  <p>No Claude. No OpenAI. Runs on Groq (free Llama 3.3 70B) or Ollama locally.<br>Data: Yahoo Finance live prices + SEC EDGAR + RSS news. Zero API keys for data.</p>
+  <div class="opt">
+    <div class="opt-hd">
+      <span class="opt-t">GROQ — FREE, CLOUD</span>
+      <span class="opt-b" style="color:#0EA472;background:#0EA47215;border:1px solid #0EA47235">RECOMMENDED</span>
+    </div>
+    <p style="margin-bottom:8px">Llama 3.3 70B. Free forever: 6,000 requests/day, no card.<br><a href="https://console.groq.com" target="_blank">console.groq.com</a> → API Keys → Create Key (30 seconds)</p>
+    <input type="password" id="groq-key" placeholder="gsk_..."/>
+    <button class="btn" onclick="saveGroq()" style="width:100%">SAVE KEY AND LAUNCH</button>
+  </div>
+  <div class="opt">
+    <div class="opt-hd">
+      <span class="opt-t">OLLAMA — LOCAL, ZERO ACCOUNTS</span>
+      <span class="opt-b" style="color:#7B55CC;background:#7B55CC15;border:1px solid #7B55CC35">OFFLINE AI</span>
+    </div>
+    <p style="margin-bottom:8px">Runs on your machine. Zero internet for AI.<br>1. <a href="https://ollama.com" target="_blank">ollama.com</a> → download<br>2. Terminal: <code style="color:#E8A020">ollama pull llama3.2</code></p>
+    <button class="btn-g" onclick="tryOllama()" style="width:100%">DETECT OLLAMA</button>
+    <div id="ollama-st" style="font-size:11px;color:#4A5E72;margin-top:6px;font-family:monospace;min-height:14px"></div>
+  </div>
+  <div class="opt" style="margin-bottom:0">
+    <div class="opt-hd"><span class="opt-t">DATA ONLY — NO AI ANALYSIS</span></div>
+    <p style="font-size:12px;color:#3A5060;margin-bottom:8px">Live prices, news, SEC filings — no LLM analysis.</p>
+    <button class="btn-sm" onclick="launch('none')" style="width:100%;padding:7px">LAUNCH DATA-ONLY</button>
+  </div>
+</div>
+</div>
+
+<div id="app">
+  <div class="hdr">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:7px;height:7px;border-radius:50%;background:#E8A020"></div>
+      <span style="font-family:monospace;font-size:13px;font-weight:700;color:#E8A020;letter-spacing:.1em">ALPHA//INTEL</span>
+      <span style="font-size:11px;color:#1E3040;font-family:monospace" id="llm-label">—</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <div id="ast" style="font-size:11px;color:#1E3040;font-family:monospace">● READY</div>
+      <button class="btn-sm" onclick="document.getElementById('modal').style.display='flex'">⚙ LLM</button>
+      <button class="btn-g" id="load-all-btn" onclick="loadAll()">↻ LOAD ALL DATA</button>
+    </div>
+  </div>
+  <div class="strip-wrap"><div id="strip"></div></div>
+  <div class="tabs">
+    <button class="tab on" onclick="tab('prices')">◈ PRICES</button>
+    <button class="tab" onclick="tab('feed')">📡 FEED</button>
+    <button class="tab" onclick="tab('alpha')">⚡ ALPHA</button>
+    <button class="tab" onclick="tab('themes')">▦ THEMES</button>
+    <button class="tab" onclick="tab('catalysts')">▲ CATALYSTS</button>
+    <button class="tab" onclick="tab('fintwit')">◎ FINTWIT</button>
+    <button class="tab" onclick="tab('letter')">✦ LETTER</button>
+  </div>
+  <div class="body">
+    <div class="panel on" id="p-prices"></div>
+    <div class="panel" id="p-feed"></div>
+    <div class="panel" id="p-alpha"></div>
+    <div class="panel" id="p-themes"></div>
+    <div class="panel" id="p-catalysts"></div>
+    <div class="panel" id="p-fintwit"></div>
+    <div class="panel" id="p-letter"></div>
+  </div>
+  <div style="padding:7px 18px;border:1px solid #1A2838;border-top:0;background:#0B1118;border-radius:0 0 10px 10px;display:flex;justify-content:space-between;font-size:10px;color:#1A2838;font-family:monospace">
+    <span>ALPHA//INTEL — GROQ/OLLAMA + YAHOO FINANCE + SEC EDGAR + NITTER — NO CLAUDE — NO OPENAI</span>
+    <span>NOT FINANCIAL ADVICE</span>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+const TKS=[
+  {t:'SIVE',n:'Sivers Semiconductors',s:'Photonics',th:'CPO/Optical',sig:'BUY',str:95,note:'Bleeding-edge photonics. NVDA EML overflow. Serenity top pick.'},
+  {t:'POET',n:'POET Technologies',s:'Photonics',th:'CPO/Optical',sig:'BUY',str:88,note:'Optical Interposer platform. Licensing model. Pre-revenue inflection.'},
+  {t:'LITE',n:'Lumentum Holdings',s:'Optical',th:'CPO/Optical',sig:'BUY',str:90,note:'Multi-year NVDA EML deal. CPO leader at scale.'},
+  {t:'COHR',n:'Coherent Corp',s:'Optical',th:'CPO/Optical',sig:'BUY',str:85,note:'800G/1.6T ramp. NVDA partner. AI photonics accelerating.'},
+  {t:'PENG',n:'Penguin Solutions',s:'Memory',th:'AI Memory',sig:'BUY',str:92,note:'MemoryAI KV cache. First CXL product for AI inference.'},
+  {t:'MU',n:'Micron Technology',s:'Memory',th:'AI Memory',sig:'BUY',str:82,note:'HBM3E ramp for Blackwell. NVDA supply partner.'},
+  {t:'NBIS',n:'Nebius Group',s:'AI Infra',th:'Data Centers',sig:'WATCH',str:72,note:'European AI cloud. Ex-Yandex infra. Speculative.'},
+  {t:'CRWV',n:'CoreWeave',s:'AI Infra',th:'Data Centers',sig:'WATCH',str:68,note:'GPU cloud. NVDA strategic. Watch concentration risk.'},
+  {t:'VPG',n:'Vishay Precision',s:'Sensors',th:'Robotics',sig:'BUY',str:80,note:'Strain gauges for robotic joints. Genuinely obscure upstream play.'},
+  {t:'OUST',n:'Ouster',s:'Lidar',th:'Robotics',sig:'BUY',str:83,note:'Sensor layer for physical AI. Humanoid robots and drones.'},
+  {t:'BESI',n:'BE Semiconductor',s:'Packaging',th:'Adv. Packaging',sig:'BUY',str:87,note:'Hybrid bonding near-monopoly. Every AI chip uses BESI tools.'},
+  {t:'RKLB',n:'Rocket Lab',s:'Space',th:'Space',sig:'BUY',str:88,note:'SpaceX S-1 halo effect. Neutron rocket upcoming. Defence and constellation ramp.'},
+  {t:'AXTI',n:'AXT Inc',s:'Substrates',th:'CPO/Optical',sig:'BUY',str:85,note:'InP substrate near-monopoly. Upstream CPO constraint. Bottleneck of the bottleneck.'},
+  {t:'AAOI',n:'Applied Optoelectronics',s:'Optical',th:'CPO/Optical',sig:'BUY',str:78,note:'CPO overflow play. Capacity-not-demand thesis. Fraud history — size accordingly.'},
+  {t:'CEG',n:'Constellation Energy',s:'Nuclear',th:'Nuclear/Power',sig:'BUY',str:84,note:'Nuclear operator. SMR agreements with hyperscalers. AI power infrastructure.'},
+  {t:'CCJ',n:'Cameco Corp',s:'Uranium',th:'Nuclear/Power',sig:'BUY',str:81,note:'Uranium miner. Nuclear demand pull-forward. Supply constrained through 2030.'},
+];
+const THMS=[
+  {id:1,ic:'▦',n:'AI Inference Memory',col:'#7B55CC',tks:['PENG','MU','SNDK'],cv:92,up:'3-5x / 18-24mo',th:'Training to inference shift makes memory bandwidth the bottleneck, not compute. CXL is the enabling standard.',s2:'PENG MemoryAI KV cache server: first commercial CXL product targeting AI inference. Tier 1 bank win = enterprise wave starting.',s3:'SNDK NVMe as AI storage layer. DRAM cycle recovery plus structural AI demand = sustained margin expansion for MU.',ri:'Hyperscaler capex pause; in-house memory controller development'},
+  {id:2,ic:'◈',n:'CPO / Optical Bottleneck',col:'#E8A020',tks:['LITE','COHR','AAOI','SIVE','AXTI'],cv:95,up:'5-10x / 3yr',th:'Goldman TAM chart: $169M to $91B by 2028. Co-packaged optics solves AI data center bandwidth constraints permanently.',s2:'LITE and COHR locked into NVDA multi-year EML agreements. AAOI and SIVE absorb overflow demand. Own both sides.',s3:'InP substrate shortage at AXTI is upstream constraint for all optical names. Tiny cap, massive leverage to the theme.',ri:'Silicon photonics disruption timeline; AAOI historical fraud risk'},
+  {id:3,ic:'▲',n:'Space / SpaceX Halo',col:'#3475C8',tks:['RKLB','ASTS','PL'],cv:85,up:'2-6x / 24mo',th:'SpaceX S-1 legitimises space as an institutional asset class. Forced index inclusion buying into pure-play space names.',s2:'Middle East conflict drives real-time geospatial intelligence spending. PL and BKSY are direct ISR beneficiaries.',s3:'RKLB Neutron rocket is the long-term compounder. ASTS direct-to-device is the speculative rocket. Size 3 to 1.',ri:'SpaceX IPO delay or disappointing pricing; launch vehicle failures'},
+  {id:4,ic:'◉',n:'Physical AI / Robotics',col:'#0EA472',tks:['OUST','VPG'],cv:80,up:'4-8x / 5yr',th:'Every humanoid robot and autonomous drone needs precision sensors. Even 1% of 10B robot prediction equals decades of lidar demand.',s2:'VPG Vishay Precision strain gauges measure forces in robotic joints. Upstream, obscure, small float. Genuinely early.',s3:'Rainbow Robotics KRX 277810 Samsung collaboration creates institutional backdoor into Korean humanoid pure-play.',ri:'Humanoid robot timelines pushed; lidar commoditisation via solid-state alternatives'},
+  {id:5,ic:'⬡',n:'Nuclear / AI Power',col:'#D93B3B',tks:['CEG','VST','CCJ','NNE'],cv:88,up:'3-5x / 3-5yr',th:'AI data centers need 24/7 carbon-free baseload power. Solar and wind intermittency is structurally incompatible with GPU cluster uptime.',s2:'Microsoft Google Amazon SMR contract awards signal the institutional inflection point in nuclear acceptance.',s3:'CCJ uranium supply is the upstream constraint. Nuclear demand pull-forward against tight supply equals structural commodity cycle.',ri:'Regulatory delays; unexpected efficiency gains in next-gen chips; political opposition to new nuclear'},
+  {id:6,ic:'◫',n:'Advanced Packaging',col:'#C44488',tks:['BESI','AMAT','ONTO'],cv:87,up:'2-4x / 2-3yr',th:'Chiplet architectures require hybrid bonding at die-to-die scale. BESI has near-monopoly on hybrid bonding tools.',s2:'TSMC CoWoS capacity expansion drives proportional bonding equipment demand. Tool scarcity means ASP increases.',s3:'Completely agnostic to chip design wars. Regardless of NVDA AMD or custom silicon winner, packaging tools win.',ri:'Packaging commoditisation; TSMC in-house tool development; next-gen chip architectures reducing bonding requirements'},
+  {id:7,ic:'❄',n:'Data Center Cooling',col:'#1DBDB5',tks:['VRT','VLTO'],cv:75,up:'2-3x / 18mo',th:'AI GPU clusters generate 10x the thermal density of traditional server racks. Direct liquid cooling is now mandatory for Blackwell generation.',s2:'Massive installed base upgrade cycle regardless of new build timelines. Existing air-cooled facilities must retrofit.',s3:'Vertiv VRT is the clear market leader with backlog visibility. VLTO is smaller pure-play with more upside on execution.',ri:'Lower-power next-generation chips reducing cooling requirements; air cooling efficiency breakthroughs'},
+  {id:8,ic:'◎',n:'EUV Supply Chain',col:'#E07832',tks:['ASML','BESI','AXTI'],cv:82,up:'2-3x / 3yr',th:'High-NA EUV is the only viable path to 2nm and below. ASML has a complete monopoly. $350M per system creates a visible spend cycle.',s2:'EUV pellicle suppliers and resist chemistry companies are concentrated upstream beneficiaries with real pricing power.',s3:'EUV enables smaller dies which means more per wafer which creates demand pull for specialty substrates at AXTI.',ri:'China export restriction reversal; EUV yield ramp delays; customer order deferrals'},
+];
+const ACCS=[
+  {h:'Citrini7',n:'Citrini',col:'#7B55CC',st:'Macro to Micro',call:'Power infra as next AI bottleneck',themes:['Power and energy for AI data centers','AI capex cycle dynamics','Semiconductor supply chains'],tr:['SVB short 2022','GLP-1 early 2023','AI infra early 2023']},
+  {h:'KawzInvests',n:'Kawz',col:'#E8A020',st:'Earnings transcript mining',call:'AAOI capacity-not-demand thesis',themes:['Optical and photonics deep dives','AAOI CPO positioning','Earnings call transcript analysis'],tr:['AAOI capacity thesis','Photonic component picks']},
+  {h:'aleabitoreddit',n:'Serenity',col:'#0EA472',st:'Early thesis early position',call:'SIVE as bleeding-edge and LITE at $337 Dec 2025',themes:['CPO supercycle framework','LITE and SIVE positioning','Photonics infrastructure thesis'],tr:['CPO supercycle call','LITE $337 December 2025','SIVE bleeding-edge call']},
+  {h:'MeatusMaximus',n:'Meatus',col:'#3475C8',st:'Portfolio construction',call:'One compounder plus four rockets framework',themes:['Sub $300k portfolio architecture','Position sizing for retail','Risk reward asymmetry'],tr:['Portfolio construction framework model']},
+  {h:'LeadLagReport',n:'LeadLag',col:'#1DBDB5',st:'Supply chain bottlenecks',call:'AXTI InP substrate before the run',themes:['Picks and shovels angle','AXTI InP substrate story','Upstream constraint identification'],tr:['AXTI early call','Supply chain bottleneck identification']},
+  {h:'StockJabber',n:'StockJabber',col:'#D93B3B',st:'Fraud and short detection',call:'Stress-test your longs',themes:['AAOI fraud history','Channel stuffing identification','Bubble detection framework'],tr:['AAOI historical fraud','Bubbleboi framework']},
+  {h:'BuccoCapital',n:'Bucco',col:'#C44488',st:'AI software second-order',call:'AI software layer before it gets crowded',themes:['AI software beneficiaries','Second-order infrastructure plays','Pre-consensus entry timing'],tr:['AI software timing calls']},
+];
+const CATS=[
+  {d:'May 15',e:'US CPI Report',ty:'MACRO',im:3,tks:['MU','PENG','Semis broadly'],ac:'Beat means risk-on, semis rally, watch 10yr yield compression. Miss means reduce growth exposure, rotate to defensives.'},
+  {d:'May 20',e:'NVDA Q1 FY26 Earnings',ty:'EARNINGS',im:5,tks:['LITE','COHR','AXTI','PENG','CRWV'],ac:'Most critical call of the quarter. Listen carefully for any CPO roadmap mentions, Blackwell demand signals, and data center capex guidance.'},
+  {d:'Jun 1',e:'SpaceX S-1 Filing Expected',ty:'CATALYST',im:4,tks:['RKLB','ASTS','PL'],ac:'Buy RKLB ahead of filing. Institutional FOMO and index inclusion expectations lift all pure-play space names.'},
+  {d:'Jun 11',e:'FOMC Rate Decision',ty:'MACRO',im:3,tks:['All growth'],ac:'Cut signal means rotate back into growth and semis. Hold signal means defensives and reduce speculative exposure.'},
+  {d:'Jun 15',e:'MU Q3 FY25 Earnings',ty:'EARNINGS',im:4,tks:['MU','PENG','SNDK'],ac:'HBM3E supply and demand update critical. AI memory TAM guidance. Key validation event for the PENG thesis.'},
+  {d:'Jul 1',e:'TSMC June Revenue',ty:'DATA',im:3,tks:['ASML','BESI','COHR'],ac:'Revenue beat signals sustained AI wafer demand. Leading indicator for the full photonics and packaging supply chain.'},
+  {d:'Jul 15',e:'Middle East and Iran Escalation Risk',ty:'GEO',im:4,tks:['RKLB','PL','BKSY'],ac:'Geospatial intelligence demand spikes. PL and BKSY are direct ISR beneficiaries. RKLB defence contracts accelerate.'},
+  {d:'Aug 1',e:'Nuclear SMR Contract Awards',ty:'CATALYST',im:3,tks:['CEG','VST','CCJ'],ac:'Microsoft and Amazon SMR announcements expected. CCJ uranium demand pull-forward. Nuclear operators re-rate.'},
+];
+const SC={BUY:'#0EA472',WATCH:'#E8A020',AVOID:'#D93B3B'};
+const TC={EARNINGS:'#0EA472',MACRO:'#3475C8',CATALYST:'#E8A020',GEO:'#D93B3B',DATA:'#4A5E72'};
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+const S={
+  llm:'none', loading:false,
+  prices:{}, pricesOk:false, pricesErr:'',
+  news:[], newsOk:false, newsErr:'',
+  tweets:{}, twitterOk:false,
+  alpha:'', letter:'', catAI:[], filter:'ALL',
+  selTk:null, tkAI:'', selTh:null, thAI:'', selAc:null, acAI:'',
+  tab:'prices',
+  get key(){return localStorage.getItem('groq_key')||''},
+};
+
+// ═══════════════════════════════════════════
+// LLM SETUP
+// ═══════════════════════════════════════════
+function saveGroq(){
+  const v=document.getElementById('groq-key').value.trim();
+  if(!v.startsWith('gsk_')){alert('Groq keys start with gsk_ — get one free at console.groq.com');return;}
+  localStorage.setItem('groq_key',v);
+  launch('groq');
+}
+async function tryOllama(){
+  const el=document.getElementById('ollama-st');
+  el.innerHTML='<span class="sp">◌</span> Checking localhost:11434...';
+  try{
+    const r=await fetch('http://localhost:11434/api/tags',{signal:AbortSignal.timeout(3000)});
+    const d=await r.json();
+    const models=d.models||[];
+    if(!models.length){el.innerHTML='Ollama running but no models. Run: <code style="color:#E8A020">ollama pull llama3.2</code>';return;}
+    localStorage.setItem('ollama_model',models[0].name);
+    el.innerHTML='Connected: '+models[0].name;
+    setTimeout(()=>launch('ollama'),700);
+  }catch(e){el.innerHTML='Not found. Install from <a href="https://ollama.com" target="_blank" style="color:#E8A020">ollama.com</a> and retry.';}
+}
+function launch(mode){
+  S.llm=mode;
+  document.getElementById('modal').style.display='none';
+  initApp();
+}
+
+// ═══════════════════════════════════════════
+// MULTI-PROXY FETCH — tries 3 proxies in sequence
+// ═══════════════════════════════════════════
+const PROXIES=[
+  {prefix:'https://corsproxy.io/?',encode:true,wrap:false},
+  {prefix:'https://api.allorigins.win/get?url=',encode:true,wrap:true},
+  {prefix:'https://api.codetabs.com/v1/proxy?quest=',encode:true,wrap:false},
+];
+
+async function fetchText(url){
+  for(const px of PROXIES){
+    try{
+      const proxyUrl=px.prefix+(px.encode?encodeURIComponent(url):url);
+      const r=await fetch(proxyUrl,{signal:AbortSignal.timeout(9000)});
+      if(!r.ok)continue;
+      if(px.wrap){
+        const d=await r.json();
+        if(d.contents&&d.contents.length>20)return d.contents;
+      }else{
+        const t=await r.text();
+        if(t&&t.length>20)return t;
+      }
+    }catch(e){}
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════════
+// PRICE FETCHING — Yahoo Finance, real data
+// ═══════════════════════════════════════════
+async function fetchPrices(){
+  setSt('Fetching prices...',true);
+  S.pricesOk=false;S.pricesErr='';
+  const syms=TKS.map(t=>t.t).join(',');
+  // Try v6 quote endpoint first
+  const urls=[
+    `https://query1.finance.yahoo.com/v6/finance/quote?symbols=${syms}&fields=regularMarketPrice,regularMarketChangePercent,regularMarketPreviousClose,marketCap,shortName`,
+    `https://query2.finance.yahoo.com/v6/finance/quote?symbols=${syms}&fields=regularMarketPrice,regularMarketChangePercent,regularMarketPreviousClose,marketCap`,
+  ];
+  for(const url of urls){
+    const text=await fetchText(url);
+    if(!text)continue;
+    try{
+      const data=JSON.parse(text);
+      const results=data.quoteResponse?.result||[];
+      if(results.length===0)continue;
+      results.forEach(q=>{
+        S.prices[q.symbol]={
+          price:q.regularMarketPrice,
+          chg:q.regularMarketChangePercent,
+          cap:q.marketCap,
+          prev:q.regularMarketPreviousClose,
+          name:q.shortName||q.symbol,
+        };
+      });
+      S.pricesOk=true;
+      setSt('Prices loaded',false);
+      if(S.tab==='prices')renderPrices();
+      return true;
+    }catch(e){}
+  }
+  S.pricesErr='Yahoo Finance CORS blocked — try refreshing or using a VPN';
+  setSt('Price fetch failed',false);
+  if(S.tab==='prices')renderPrices();
+  return false;
+}
+
+// ═══════════════════════════════════════════
+// NEWS FETCHING — Yahoo Finance RSS + Reddit + SEC
+// ═══════════════════════════════════════════
+async function fetchNews(){
+  setSt('Fetching news...',true);
+  S.news=[];S.newsOk=false;
+
+  // Yahoo Finance RSS — most reliable
+  const yfSyms=TKS.map(t=>t.t).join(',');
+  const yfUrl=`https://feeds.finance.yahoo.com/rss/2.0/headline?s=${yfSyms}&region=US&lang=en-US`;
+  const yfText=await fetchText(yfUrl);
+  if(yfText&&yfText.includes('<item>')){
+    const xml=new DOMParser().parseFromString(yfText,'text/xml');
+    const items=Array.from(xml.querySelectorAll('item')).slice(0,15);
+    items.forEach(it=>{
+      const title=(it.querySelector('title')?.textContent||'').replace(/<!\[CDATA\[|\]\]>/g,'').trim();
+      if(title.length>10){
+        S.news.push({
+          title,
+          date:it.querySelector('pubDate')?.textContent||'',
+          link:it.querySelector('link')?.textContent||'',
+          src:'Yahoo Finance',
+        });
+      }
+    });
+    if(S.news.length>0)S.newsOk=true;
+  }
+
+  // Reddit financial RSS
+  const rdUrl='https://www.reddit.com/r/SecurityAnalysis+investing+stocks/.rss?limit=8';
+  const rdText=await fetchText(rdUrl);
+  if(rdText&&rdText.includes('<entry>')){
+    const xml=new DOMParser().parseFromString(rdText,'application/xml');
+    const entries=Array.from(xml.querySelectorAll('entry')).slice(0,6);
+    entries.forEach(e=>{
+      const title=(e.querySelector('title')?.textContent||'').trim();
+      if(title.length>10){
+        S.news.push({title,date:e.querySelector('updated')?.textContent||'',link:e.querySelector('link')?.getAttribute('href')||'',src:'Reddit'});
+      }
+    });
+  }
+
+  // Sort by date
+  S.news.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+  setSt(S.newsOk?'News loaded':'News unavailable',false);
+  if(S.tab==='feed')renderFeed();
+  return S.newsOk;
+}
+
+// ═══════════════════════════════════════════
+// TWITTER via NITTER RSS
+// ═══════════════════════════════════════════
+const NITTER=['nitter.privacydev.net','nitter.cz','nitter.poast.org'];
+async function fetchNitter(handle){
+  for(const inst of NITTER){
+    const text=await fetchText(`https://${inst}/${handle}/rss`);
+    if(text&&text.includes('<item>')){
+      const xml=new DOMParser().parseFromString(text,'text/xml');
+      const items=Array.from(xml.querySelectorAll('item')).slice(0,5);
+      const tweets=items.map(it=>(it.querySelector('title')?.textContent||'').replace(/<!\[CDATA\[|\]\]>/g,'').replace(/^R to .+?: /,'').trim()).filter(t=>t.length>10);
+      if(tweets.length>0)return tweets;
+    }
+  }
+  return [];
+}
+async function fetchAllTwitter(){
+  const handles=['Citrini7','KawzInvests','aleabitoreddit'];
+  for(const h of handles){
+    const tw=await fetchNitter(h);
+    if(tw.length)S.tweets[h]=tw;
+  }
+  S.twitterOk=Object.keys(S.tweets).length>0;
+  if(S.tab==='fintwit')renderFintwit();
+}
+
+// ═══════════════════════════════════════════
+// LOAD ALL — orchestrates everything
+// ═══════════════════════════════════════════
+async function loadAll(){
+  const btn=document.getElementById('load-all-btn');
+  if(btn){btn.disabled=true;btn.textContent='↻ LOADING...';}
+  await Promise.all([fetchPrices(),fetchNews()]);
+  fetchAllTwitter(); // non-blocking, Nitter is slow
+  if(btn){btn.disabled=false;btn.textContent='↻ LOAD ALL DATA';}
+  renderDataBar();
+  if(S.tab==='alpha')renderAlpha();
+}
+
+// ═══════════════════════════════════════════
+// CONTEXT BUILDERS — inject real data into LLM prompts
+// This is the core anti-hallucination mechanism
+// ═══════════════════════════════════════════
+function buildPriceContext(){
+  if(!S.pricesOk||Object.keys(S.prices).length===0)return'[NO PRICE DATA LOADED — DO NOT INVENT PRICES]';
+  const lines=TKS.map(tk=>{
+    const p=S.prices[tk.t];
+    if(!p||!p.price)return`${tk.t}: price unavailable`;
+    const chg=p.chg!=null?(p.chg>=0?'+':'')+p.chg.toFixed(2)+'%':'';
+    return`${tk.t} (${tk.n}): $${p.price.toFixed(2)} ${chg}`;
+  });
+  return`=== REAL CURRENT PRICES FROM YAHOO FINANCE — ${new Date().toLocaleDateString('en-GB')} ===
+${lines.join('\n')}
+RULE: Use ONLY these prices. Do NOT invent different price levels.`;
+}
+
+function buildNewsContext(){
+  if(S.news.length===0)return'[NO NEWS DATA LOADED — DO NOT INVENT NEWS EVENTS OR PARTNERSHIPS]';
+  const twitterLines=Object.entries(S.tweets).map(([h,tw])=>`@${h}: ${tw.slice(0,2).join(' | ')}`).join('\n');
+  const newsLines=S.news.slice(0,12).map(n=>`[${n.src}] ${n.title}`).join('\n');
+  return`=== REAL NEWS HEADLINES FETCHED TODAY ===
+${newsLines}
+${twitterLines?`\n=== FINTWIT TWEETS FROM NITTER RSS ===\n${twitterLines}`:''}
+RULE: Only reference events that appear in these headlines. Do NOT invent partnerships, contracts, or announcements.`;
+}
+
+function buildSystemPrompt(){
+  return`You are an elite deep technology investment analyst. You operate by a strict code of accuracy.
+
+ABSOLUTE RULES — violating these destroys your credibility:
+1. NEVER invent, estimate, or fabricate stock prices. Use ONLY the prices in the PRICE DATA section.
+2. NEVER invent news events, partnerships, contract wins, or product announcements. Use ONLY headlines in the NEWS section.
+3. If a ticker has no news in the provided data, say explicitly: "No current news data for [TICKER] — cannot make data-grounded calls."
+4. If price data is missing for a ticker, say: "Price data unavailable for [TICKER]."
+5. Do NOT produce plausible-sounding but invented analysis. Accurate silence beats confident fabrication.
+6. You may discuss structural thesis (CPO supercycle, AI memory bottleneck etc.) from your training knowledge — but all specific current claims must be grounded in the provided data.
+7. Acknowledge when your analysis is thesis-based vs data-grounded. Label each clearly.
+
+Your value is information accuracy, not engaging storytelling.`;
+}
+
+// ═══════════════════════════════════════════
+// LLM CALL — Groq or Ollama
+// ═══════════════════════════════════════════
+async function callLLM(prompt,system){
+  if(S.llm==='none')throw new Error('No LLM configured — click ⚙ LLM to set up Groq or Ollama');
+  const isGroq=S.llm==='groq';
+  const url=isGroq?'https://api.groq.com/openai/v1/chat/completions':'http://localhost:11434/v1/chat/completions';
+  const model=isGroq?'llama-3.3-70b-versatile':(localStorage.getItem('ollama_model')||'llama3.2');
+  const headers={'Content-Type':'application/json'};
+  if(isGroq)headers['Authorization']='Bearer '+S.key;
+  const r=await fetch(url,{
+    method:'POST',headers,
+    body:JSON.stringify({model,max_tokens:1400,temperature:0.3,
+      messages:[
+        {role:'system',content:system||buildSystemPrompt()},
+        {role:'user',content:prompt}
+      ]})
+  });
+  if(!r.ok){let m='HTTP '+r.status;try{const e=await r.json();m=e.error?.message||m;}catch(x){}throw new Error(m);}
+  const d=await r.json();
+  return d.choices?.[0]?.message?.content||'';
+}
+
+// ═══════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════
+function setSt(msg,active){
+  const el=document.getElementById('ast');if(!el)return;
+  el.innerHTML=active?`<span class="sp">◌</span> ${msg}`:`● ${msg||'READY'}`;
+  el.style.color=active?'#E8A020':'#1E3040';
+}
+function bdg(l,c,bg){return`<span class="ab" style="color:${c};background:${bg||c+'18'};border:1px solid ${c}35">${l}</span>`;}
+function bar(p,c){return`<div style="height:2px;background:#1A2838;border-radius:2px;overflow:hidden"><div style="height:100%;width:${p}%;background:${c};border-radius:2px"></div></div>`;}
+function fmtCap(n){if(!n)return'';if(n>=1e12)return'$'+(n/1e12).toFixed(1)+'T';if(n>=1e9)return'$'+(n/1e9).toFixed(1)+'B';if(n>=1e6)return'$'+(n/1e6).toFixed(1)+'M';return'';}
+function md(text){
+  return(text||'').split('\n').map(line=>{
+    const l=line.trim();if(!l)return'';
+    if(/^## /.test(l)){
+      const lab=l.replace(/^## /,'');
+      const c=/critical|act now/i.test(lab)?'#D93B3B':/building|watch/i.test(lab)?'#E8A020':/confirm|long/i.test(lab)?'#0EA472':/second|order|effect/i.test(lab)?'#1DBDB5':/max|upside|action|trade/i.test(lab)?'#7B55CC':/macro|pulse/i.test(lab)?'#3475C8':/risk/i.test(lab)?'#D93B3B':'#E8A020';
+      return`<div style="display:flex;align-items:center;gap:8px;margin:16px 0 8px"><span style="flex:1;height:1px;background:${c}30"></span><span style="font-size:10px;font-weight:700;letter-spacing:.12em;color:${c};font-family:monospace;white-space:nowrap">${lab.toUpperCase()}</span><span style="flex:1;height:1px;background:${c}30"></span></div>`;
+    }
+    if(/^[*•\-]/.test(l)){
+      const ct=l.replace(/^[*•\-]\s*/,'').replace(/\*\*(.+?)\*\*/g,'<strong style="color:#1DBDB5">$1</strong>');
+      return`<div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid #1A283840;font-size:13px;color:#B0C0D0;line-height:1.65"><span style="color:#E8A020;flex-shrink:0;padding-top:2px">▸</span><span>${ct}</span></div>`;
+    }
+    return`<p style="margin:3px 0;font-size:13px;color:#B0C0D0;line-height:1.65">${l.replace(/\*\*(.+?)\*\*/g,'<strong style="color:#1DBDB5">$1</strong>')}</p>`;
+  }).join('');
+}
+function reveal(text,el){
+  if(!el)return;
+  const lines=text.split('\n').filter(l=>l.trim());let i=0;
+  function step(){
+    if(i>=lines.length){el.innerHTML=`<div class="fd">${md(text)}</div>`;return;}
+    el.innerHTML=md(lines.slice(0,i+3).join('\n'))+'<span class="sp" style="color:#E8A020;font-size:11px"> ▌</span>';
+    i+=3;setTimeout(step,55);
+  }step();
+}
+
+function renderDataBar(){
+  const el=document.getElementById('data-status');if(!el)return;
+  const pills=[
+    S.pricesOk?`<span class="data-pill pill-ok">✓ Prices (${Object.keys(S.prices).length}/${TKS.length} tickers)</span>`:`<span class="data-pill ${S.pricesErr?'pill-err':'pill-loading'}">${S.pricesErr?'✗ Prices failed':'○ Prices not loaded'}</span>`,
+    S.newsOk?`<span class="data-pill pill-ok">✓ News (${S.news.length} headlines)</span>`:`<span class="data-pill pill-loading">○ News not loaded</span>`,
+    S.twitterOk?`<span class="data-pill pill-ok">✓ Twitter (${Object.keys(S.tweets).length} accounts)</span>`:`<span class="data-pill pill-loading">○ Nitter checking...</span>`,
+  ].join('');
+  el.innerHTML=pills;
+}
+
+// ═══════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════
+function tab(t){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  const tabs=['prices','feed','alpha','themes','catalysts','fintwit','letter'];
+  const i=tabs.indexOf(t);if(i>=0)document.querySelectorAll('.tab')[i].classList.add('on');
+  tabs.forEach(p=>{const el=document.getElementById('p-'+p);if(el){el.style.display=p===t?'block':'none';el.className='panel'+(p===t?' on':'');}});
+  S.tab=t;
+  const panel=document.getElementById('p-'+t);
+  if(panel&&!panel.innerHTML.trim()){
+    if(t==='feed')renderFeed();
+    else if(t==='alpha')renderAlpha();
+    else if(t==='themes')renderThemes();
+    else if(t==='catalysts')renderCatalysts();
+    else if(t==='fintwit')renderFintwit();
+    else if(t==='letter')renderLetter();
+  }
+}
+
+// ═══════════════════════════════════════════
+// PRICES TAB
+// ═══════════════════════════════════════════
+function renderPrices(){
+  const el=document.getElementById('p-prices');if(!el)return;
+  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+    <div><div style="font-size:15px;font-weight:500;color:#DDE4EF">Live Prices</div>
+    <div style="font-size:12px;color:#4A5E72;margin-top:2px">Yahoo Finance · no API key · click cards for AI deep dive</div></div>
+    <button class="btn" onclick="fetchPrices().then(renderPrices)">↻ REFRESH PRICES</button></div>`;
+
+  if(S.pricesErr){
+    h+=`<div style="padding:12px 14px;background:#D93B3B12;border:1px solid #D93B3B30;border-radius:8px;color:#D93B3B;font-size:13px;margin-bottom:12px">
+      ⚠ ${S.pricesErr}<br><span style="font-size:11px;color:#8A9AB0;margin-top:4px;display:block">The Yahoo Finance API is sometimes CORS-restricted. Try clicking ↻ REFRESH PRICES again, or use a browser extension like "CORS Unblock".</span></div>`;
+  }
+
+  h+=`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:9px">`;
+  TKS.forEach(tk=>{
+    const p=S.prices[tk.t];
+    const sc=SC[tk.sig];
+    const hasPrice=p&&p.price!=null;
+    const priceStr=hasPrice?`$${p.price.toFixed(2)}`:'--';
+    const chgVal=p?.chg;
+    const chgStr=chgVal!=null?(chgVal>=0?'+':'')+chgVal.toFixed(2)+'%':'--';
+    const chgCol=chgVal==null?'#4A5E72':chgVal>=0?'#0EA472':'#D93B3B';
+    const arrow=chgVal!=null?(chgVal>=0?' ▲':' ▼'):'';
+    h+=`<div class="card" style="padding:12px 13px;cursor:pointer" onclick="deepTicker('${tk.t}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+        <div><div style="font-family:monospace;font-size:14px;font-weight:700;color:#E8A020">${tk.t}</div>
+        <div style="font-size:10px;color:#4A5E72">${tk.n.slice(0,20)}</div></div>${bdg(tk.sig,sc)}</div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+        <span style="font-family:monospace;font-size:13px;font-weight:700;color:${hasPrice?'#DDE4EF':'#2E4050'}">${priceStr}</span>
+        <span style="font-family:monospace;font-size:11px;font-weight:700;color:${chgCol}">${chgStr}${arrow}</span>
+      </div>
+      ${bar(tk.str,sc)}
+      <div style="display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:#253545;font-family:monospace">
+        <span>${tk.s}</span><span>${p?.cap?fmtCap(p.cap):''}</span></div>
+      <p style="font-size:11px;color:#3A5060;margin-top:5px;line-height:1.4">${tk.note.slice(0,60)}...</p>
+    </div>`;
+  });
+  h+=`</div><div id="ticker-ai" style="margin-top:14px"></div>`;
+  if(!S.pricesOk&&!S.pricesErr){
+    h+=`<div style="margin-top:12px;padding:16px;text-align:center;background:#101820;border:1px solid #1A2838;border-radius:8px;color:#4A5E72;font-size:12px;font-family:monospace">
+      Click ↻ REFRESH PRICES or ↻ LOAD ALL DATA to fetch real Yahoo Finance prices</div>`;
+  }
+  el.innerHTML=h;
+  if(S.selTk&&S.tkAI)renderTickerAI(S.selTk,S.tkAI);
+}
+
+function renderTickerAI(tk,text){
+  const el=document.getElementById('ticker-ai');if(!el)return;
+  const sc=SC[tk.sig];
+  el.innerHTML=`<div class="fd" style="padding:16px;background:#101820;border:1px solid ${sc}30;border-radius:8px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-family:monospace;font-size:15px;font-weight:700;color:#E8A020">${tk.t}</span>
+        <span style="font-size:13px;color:#4A5E72">${tk.n}</span>${bdg(tk.sig,sc)}
+        ${S.prices[tk.t]?.price?bdg('$'+S.prices[tk.t].price.toFixed(2),sc):''}
+      </div>
+      <button onclick="S.selTk=null;S.tkAI='';renderPrices()" style="background:transparent;border:none;color:#4A5E72;cursor:pointer;font-size:16px">✕</button>
+    </div><div id="tk-md"></div></div>`;
+  reveal(text,document.getElementById('tk-md'));
+}
+
+async function deepTicker(sym){
+  const tk=TKS.find(x=>x.t===sym);if(!tk||S.loading)return;
+  if(S.llm==='none'){alert('Configure an LLM — click ⚙ LLM');return;}
+  S.loading=true;S.selTk=tk;S.tkAI='';setSt('Analysing '+sym+'...',true);
+  renderPrices();
+  const el=document.getElementById('ticker-ai');if(!el){S.loading=false;return;}
+  el.innerHTML=`<div style="padding:14px;background:#101820;border:1px solid #1A2838;border-radius:8px"><span class="sp" style="color:#E8A020">◌</span> <span style="font-size:12px;color:#4A5E72;font-family:monospace">Building grounded analysis for ${sym}...</span></div>`;
+  try{
+    const priceCtx=buildPriceContext();
+    const newsCtx=buildNewsContext();
+    const tkNews=S.news.filter(n=>n.title.toUpperCase().includes(sym)||n.title.toLowerCase().includes(tk.n.toLowerCase().split(' ')[0])).slice(0,5).map(n=>`[${n.src}] ${n.title}`).join('\n')||'No specific news found for this ticker in today\'s feed.';
+    const text=await callLLM(
+`${priceCtx}
+
+${newsCtx}
+
+=== TICKER-SPECIFIC NEWS FOR ${sym} ===
+${tkNews}
+
+=== STOCK PROFILE ===
+${sym} (${tk.n}) | Sector: ${tk.s} | Theme: ${tk.th} | Signal: ${tk.sig} | Conviction: ${tk.str}/100
+Thesis: ${tk.note}
+
+Provide a grounded analysis using ONLY the real data above. Structure as:
+
+## Current Price Action
+(Reference actual price and % change from above. Comment on what this tells us.)
+
+## News Grounded Catalysts
+(Only reference headlines that appear in the news section above. If no specific news, say so.)
+
+## Structural Bull Case
+(Thesis-based, label as thesis knowledge, not current news)
+
+## Key Risks
+(Be specific. If price is known, reference actual levels.)
+
+## What I Am Watching Next
+(Specific data points, earnings dates, or events that would move conviction)`,
+    buildSystemPrompt());
+    S.tkAI=text;
+    renderTickerAI(tk,text);
+    setSt(null,false);
+  }catch(e){
+    const el2=document.getElementById('ticker-ai');
+    if(el2)el2.innerHTML=`<div style="color:#D93B3B;padding:12px;font-size:13px">⚠ ${e.message}</div>`;
+    setSt('ERROR',false);
+  }
+  S.loading=false;
+}
+
+// ═══════════════════════════════════════════
+// FEED TAB
+// ═══════════════════════════════════════════
+function renderFeed(){
+  const el=document.getElementById('p-feed');if(!el)return;
+  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <div><div style="font-size:15px;font-weight:500;color:#DDE4EF">Live Intelligence Feed</div>
+    <div style="font-size:12px;color:#4A5E72;margin-top:2px">Yahoo Finance + Reddit + Nitter — zero API keys</div></div>
+    <button class="btn" onclick="fetchNews().then(renderFeed)">↻ REFRESH NEWS</button></div>`;
+
+  if(Object.keys(S.tweets).length){
+    h+=`<div style="margin-bottom:14px;padding:10px 14px;background:#0EA47212;border:1px solid #0EA47230;border-radius:8px">
+      <div style="font-size:10px;font-weight:700;color:#0EA472;font-family:monospace;letter-spacing:.1em;margin-bottom:8px">✓ REAL TWEETS — NITTER RSS (NO TWITTER API KEY)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">`;
+    Object.entries(S.tweets).forEach(([h2,tws])=>{
+      const acc=ACCS.find(a=>a.h===h2)||{col:'#E8A020'};
+      h+=`<div style="background:#101820;border:1px solid ${acc.col}30;border-radius:8px;padding:10px 12px">
+        <div style="font-family:monospace;font-size:11px;font-weight:700;color:${acc.col};margin-bottom:8px">@${h2}</div>`;
+      tws.slice(0,3).forEach(tw=>{h+=`<div style="font-size:11px;color:#8A9AB0;padding:5px 0;border-bottom:1px solid #1A283860;line-height:1.5">${tw.slice(0,130)}</div>`;});
+      h+=`</div>`;
+    });
+    h+=`</div></div>`;
+  }
+
+  if(S.news.length){
+    h+=`<div style="font-size:10px;font-weight:700;color:#2E4050;font-family:monospace;letter-spacing:.1em;margin-bottom:8px">NEWS FEED — ${S.news.length} ITEMS — CLICK TO OPEN</div>
+    <div style="background:#101820;border:1px solid #1A2838;border-radius:8px;overflow:hidden">`;
+    S.news.slice(0,30).forEach(n=>{
+      const tc=n.src==='Reddit'?'#E07832':'#3475C8';
+      const date=n.date?new Date(n.date).toLocaleDateString('en-GB',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+      h+=`<div style="padding:9px 14px;border-bottom:1px solid #1A283850;cursor:pointer" onclick="window.open('${n.link}','_blank')">
+        <div style="font-size:12px;color:#B0C0D0;line-height:1.5;margin-bottom:4px">${n.title.slice(0,140)}</div>
+        <div style="display:flex;gap:8px;align-items:center">${bdg(n.src,tc)}<span style="font-size:10px;color:#2E4050;font-family:monospace">${date}</span></div>
+      </div>`;
+    });
+    h+=`</div>`;
+  }else{
+    h+=`<div style="padding:32px;text-align:center;background:#101820;border:1px solid #1A2838;border-radius:8px">
+      <div style="font-size:13px;color:#4A5E72;margin-bottom:12px">No feed data loaded yet</div>
+      <button class="btn" onclick="loadAll()">↻ LOAD ALL DATA</button></div>`;
+  }
+  el.innerHTML=h;
+}
+
+// ═══════════════════════════════════════════
+// ALPHA SCAN TAB — grounded in real data
+// ═══════════════════════════════════════════
+function renderAlpha(){
+  const el=document.getElementById('p-alpha');if(!el)return;
+  const noLLM=S.llm==='none';
+  const dataLoaded=S.pricesOk||S.newsOk;
+  el.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+    <div><div style="font-size:15px;font-weight:500;color:#DDE4EF">Alpha Scan</div>
+    <div style="font-size:12px;color:#4A5E72;margin-top:2px">${S.llm==='groq'?'Groq — Llama 3.3 70B — grounded in live data':S.llm==='ollama'?'Ollama — local Llama — grounded in live data':'No LLM configured'}</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn-g" onclick="loadAll()">↻ LOAD DATA FIRST</button>
+      <button class="btn" id="scan-btn" onclick="runAlpha()"${noLLM?' disabled':''}>⚡ SCAN</button>
+    </div></div>
+  <div class="data-bar" id="data-status"></div>
+  ${!dataLoaded?`<div style="padding:12px 14px;background:#E8A02012;border:1px solid #E8A02030;border-radius:8px;margin-bottom:12px;font-size:13px;color:#E8A020">
+    ⚠ Load data first before scanning. Without real prices and news, the AI can only use its training knowledge which may be outdated. Click ↻ LOAD DATA FIRST above.</div>`:''}
+  ${noLLM?`<div style="padding:12px;background:#101820;border:1px solid #E8A02030;border-radius:8px;font-size:13px;color:#E8A020;margin-bottom:12px">No LLM configured. <a href="#" onclick="document.getElementById('modal').style.display='flex'" style="color:#E8A020">→ Set up Groq free</a></div>`:''}
+  <div id="alpha-out">${S.alpha?`<div style="padding:16px;background:#101820;border:1px solid #1A2838;border-radius:8px">${md(S.alpha)}</div>`:''}</div>`;
+  renderDataBar();
+}
+
+async function runAlpha(){
+  if(S.loading)return;
+  const btn=document.getElementById('scan-btn');
+  const out=document.getElementById('alpha-out');if(!out)return;
+  S.loading=true;if(btn){btn.disabled=true;btn.textContent='◌ SCANNING...';}
+  setSt('Scanning...',true);
+  out.innerHTML=`<div style="padding:16px;background:#101820;border:1px solid #1A2838;border-radius:8px"><span class="sp" style="color:#E8A020">◌</span> <span style="font-size:12px;color:#4A5E72;font-family:monospace">Querying ${S.llm==='groq'?'Groq Llama 3.3 70B':'Ollama'} with live market data...</span></div>`;
+  try{
+    const priceCtx=buildPriceContext();
+    const newsCtx=buildNewsContext();
+    const text=await callLLM(
+`${priceCtx}
+
+${newsCtx}
+
+=== WATCHLIST OVERVIEW ===
+Sectors monitored: Photonics (SIVE, POET), Optical/CPO (LITE, COHR, AAOI, AXTI), AI Memory (PENG, MU), AI Infra (NBIS, CRWV), Sensors/Robotics (VPG, OUST), Packaging (BESI), Space (RKLB), Nuclear (CEG, CCJ)
+
+Generate a daily alpha briefing. CRITICAL: Base ALL specific claims on the data provided above.
+If a ticker has no news in the provided headlines, do not force analysis on it. 
+If prices are unavailable, do not invent price levels.
+
+## CRITICAL — Act Now
+(Only if real news or significant price moves justify it. Cite the specific headline.)
+• [Specific finding — reference the actual news source]
+• [Second finding]
+
+## BUILDING — Next 30 Days
+(Structural thesis points you can make based on real sector knowledge, labeled as thesis not news)
+• [Thesis-grounded point — label as THESIS]
+• [Second point]
+• [Third point]
+
+## THESIS CONFIRMED
+(Evidence from today's real news that validates long-term positions)
+• [Cite specific headline]
+• [Second confirmation]
+
+## SECOND AND THIRD ORDER EFFECTS
+(Non-obvious implications of today's real data)
+• [Implication grounded in real news or price action]
+• [Second implication]
+
+## MAX UPSIDE ACTION
+(Only make specific recommendations where you have real data support)
+• [Action grounded in real data — cite source]
+• [Second action]`,
+    buildSystemPrompt());
+    S.alpha=text;
+    out.innerHTML=`<div style="padding:16px;background:#101820;border:1px solid #1A2838;border-radius:8px" id="alpha-md"></div>`;
+    reveal(text,document.getElementById('alpha-md'));
+    setSt('SCAN '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}),false);
+  }catch(e){
+    out.innerHTML=`<div style="padding:14px;background:#101820;border:1px solid #D93B3B40;border-radius:8px;color:#D93B3B;font-size:13px">⚠ ${e.message}</div>`;
+    setSt('ERROR',false);
+  }
+  if(btn){btn.disabled=false;btn.textContent='⚡ SCAN';}S.loading=false;
+}
+
+// ═══════════════════════════════════════════
+// THEMES TAB
+// ═══════════════════════════════════════════
+function renderThemes(){
+  let h=`<div style="margin-bottom:14px"><div style="font-size:15px;font-weight:500;color:#DDE4EF">Investment Themes</div>
+    <div style="font-size:12px;color:#4A5E72;margin-top:2px">8 structural megatrends — click for AI analysis grounded in live data</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">`;
+  THMS.forEach(th=>{
+    const tkPrices=th.tks.map(t=>{const p=S.prices[t];return p?.price?`${t}: $${p.price.toFixed(2)}`:`${t}: --`;}).join(' · ');
+    h+=`<div class="card" style="cursor:pointer;overflow:hidden" onclick="analyseTheme(${th.id})">
+      <div style="padding:11px 13px;border-bottom:1px solid #1A2838;background:${th.col}12">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+          <span style="color:${th.col}">${th.ic}</span>
+          <div style="display:flex;gap:8px"><span style="font-size:11px;font-weight:700;color:${th.col};font-family:monospace">${th.cv}/100</span>
+          <span style="font-size:10px;color:#4A5E72;font-family:monospace">${th.up}</span></div>
+        </div>
+        <div style="font-size:13px;font-weight:500;color:#DDE4EF;margin-bottom:7px">${th.n}</div>
+        ${bar(th.cv,th.col)}
+        <div style="font-family:monospace;font-size:10px;color:#3A5060;margin-top:5px">${tkPrices}</div>
+      </div>
+      <div style="padding:10px 13px">
+        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:7px">${th.tks.map(t=>bdg(t,th.col)).join('')}</div>
+        <p style="font-size:12px;color:#4A5E72;margin:0 0 7px;line-height:1.5">${th.th.slice(0,105)}...</p>
+        <div style="font-size:10px;color:${th.col};font-family:monospace">→ AI DEEP DIVE WITH LIVE DATA</div>
+      </div></div>`;
+  });
+  h+=`</div><div id="theme-ai" style="margin-top:14px"></div>`;
+  document.getElementById('p-themes').innerHTML=h;
+}
+
+async function analyseTheme(id){
+  const th=THMS.find(x=>x.id===id);if(!th||S.loading)return;
+  if(S.llm==='none'){alert('Configure an LLM — click ⚙ LLM');return;}
+  S.loading=true;setSt('Analysing '+th.n+'...',true);
+  const out=document.getElementById('theme-ai');
+  out.innerHTML=`<div style="padding:14px;background:#101820;border:1px solid ${th.col}30;border-radius:8px"><span class="sp" style="color:${th.col}">◌</span> <span style="font-size:12px;color:#4A5E72;font-family:monospace">Generating grounded analysis...</span></div>`;
+  try{
+    const priceCtx=buildPriceContext();
+    const themeNews=S.news.filter(n=>th.tks.some(t=>n.title.toUpperCase().includes(t))).slice(0,6).map(n=>`[${n.src}] ${n.title}`).join('\n')||'No specific news found for these tickers today.';
+    const text=await callLLM(
+`${priceCtx}
+
+=== NEWS SPECIFIC TO ${th.n.toUpperCase()} TICKERS ===
+${themeNews}
+
+=== THEME OVERVIEW ===
+${th.n} | Conviction: ${th.cv}/100 | Tickers: ${th.tks.join(', ')} | Target: ${th.up}
+Thesis: ${th.th}
+Second order: ${th.s2}
+Third order: ${th.s3}
+Key risk: ${th.ri}
+
+## Current Catalyst Stack
+(Based on real news above. Label each point as NEWS-GROUNDED or THESIS-BASED.)
+
+## Sizing Framework
+(Which ticker leads, which leverages, which hedges — with approximate allocation %)
+
+## Watch Points
+(3 specific KPIs to track — what good vs bad looks like with real numbers where possible)
+
+## What Kills This
+(3 specific scenarios — be honest)`,
+    buildSystemPrompt());
+    out.innerHTML=`<div class="fd" style="padding:16px;background:#101820;border:1px solid ${th.col}30;border-radius:8px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:8px"><span style="color:${th.col}">${th.ic}</span>
+        <span style="font-size:14px;font-weight:500;color:${th.col}">${th.n}</span>${bdg(th.cv+'/100',th.col)}${bdg(th.up,th.col)}</div>
+        <button onclick="document.getElementById('theme-ai').innerHTML=''" style="background:transparent;border:none;color:#4A5E72;cursor:pointer;font-size:16px">✕</button>
+      </div><div id="th-md"></div></div>`;
+    reveal(text,document.getElementById('th-md'));setSt(null,false);
+  }catch(e){out.innerHTML=`<div style="color:#D93B3B;padding:12px;font-size:13px">⚠ ${e.message}</div>`;setSt('ERROR',false);}
+  S.loading=false;
+}
+
+// ═══════════════════════════════════════════
+// CATALYSTS TAB
+// ═══════════════════════════════════════════
+function renderCatalysts(){
+  const el=document.getElementById('p-catalysts');if(!el)return;
+  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <div><div style="font-size:15px;font-weight:500;color:#DDE4EF">Catalyst Calendar</div>
+    <div style="font-size:12px;color:#4A5E72;margin-top:2px">AI commentary grounded in real price data — no invented price levels</div></div>
+    <button class="btn" onclick="refreshAllCats()" id="cats-btn">↻ UPDATE ALL</button></div>`;
+  CATS.forEach((c,i)=>{
+    const tc=TC[c.ty]||'#4A5E72';
+    const dots=[1,2,3,4,5].map(j=>`<span style="width:6px;height:6px;border-radius:50%;background:${j<=c.im?tc:'#1A2838'};display:inline-block;margin-right:2px"></span>`).join('');
+    const relevantPrices=c.tks.map(t=>{const p=S.prices[t];return p?.price?`${t}=$${p.price.toFixed(2)}`:null;}).filter(Boolean).join(' ');
+    h+=`<div style="display:flex;gap:12px;padding:12px 14px;margin-bottom:8px;background:#101820;border:1px solid #1A2838;border-radius:8px;align-items:flex-start">
+      <div style="flex-shrink:0;width:52px;text-align:center;padding-top:2px">
+        <div style="font-family:monospace;font-size:11px;font-weight:700;color:#E8A020">${c.d}</div>
+        <div style="margin-top:6px">${dots}</div>
+        ${relevantPrices?`<div style="font-size:9px;color:#2E4050;font-family:monospace;margin-top:4px;line-height:1.3">${relevantPrices}</div>`:''}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px">
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+            <span style="font-size:13px;font-weight:500;color:#DDE4EF">${c.e}</span>${bdg(c.ty,tc)}
+          </div>
+          <button class="btn-sm" onclick="refreshCat(${i})">↻ AI UPDATE</button>
+        </div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px">${c.tks.map(t=>bdg(t,'#4A5E72','#1A2838')).join('')}</div>
+        <div id="cat-${i}" style="font-size:12px;color:#8A9AB0;line-height:1.6;padding:7px 11px;background:#060A0F;border-radius:0 6px 6px 0;border-left:3px solid ${tc}">
+          <span style="font-size:10px;font-weight:700;color:${tc};font-family:monospace">FRAMEWORK: </span>${S.catAI[i]||c.ac}
+        </div>
+      </div></div>`;
+  });
+  el.innerHTML=h;
+}
+
+async function refreshCat(i){
+  if(S.loading)return;if(S.llm==='none'){alert('Configure an LLM — click ⚙ LLM');return;}
+  const c=CATS[i];const el=document.getElementById(`cat-${i}`);if(!el)return;
+  S.loading=true;setSt(`Updating ${c.e}...`,true);
+  const tc=TC[c.ty]||'#4A5E72';
+  el.innerHTML=`<span class="sp" style="color:${tc}">◌</span> <span style="font-size:11px;color:#4A5E72;font-family:monospace">Generating grounded analysis...</span>`;
+  try{
+    const priceCtx=buildPriceContext();
+    const catNews=S.news.filter(n=>c.tks.some(t=>n.title.toUpperCase().includes(t))).slice(0,4).map(n=>`[${n.src}] ${n.title}`).join('\n')||'No specific news for these tickers in today\'s feed.';
+    const text=await callLLM(
+`${priceCtx}
+
+=== RELEVANT NEWS FOR THIS CATALYST ===
+${catNews}
+
+=== CATALYST ===
+Event: ${c.e}
+Date: ${c.d} | Type: ${c.ty} | Impact: ${c.im}/5
+Affected tickers: ${c.tks.join(', ')}
+Base framework: ${c.ac}
+
+Provide 3-4 sentences of grounded catalyst analysis:
+1. What specifically to watch for — cite real prices from above where relevant
+2. Bull scenario vs bear scenario with realistic probabilities
+3. Specific entry or exit triggers based on real price levels (use ONLY prices from the data above)
+4. One non-obvious second-order effect
+
+CRITICAL: Use ONLY real prices from the data section. Do NOT invent price targets.`,
+    buildSystemPrompt());
+    S.catAI[i]=text;
+    el.innerHTML=`<span style="font-size:10px;font-weight:700;color:${tc};font-family:monospace">LIVE ANALYSIS: </span><span style="color:#B0C0D0;font-size:12px;line-height:1.7">${text.replace(/\n/g,' ').replace(/\*\*(.+?)\*\*/g,'<strong style="color:#1DBDB5">$1</strong>')}</span>`;
+    setSt(null,false);
+  }catch(e){el.innerHTML=`<span style="color:#D93B3B">⚠ ${e.message}</span>`;setSt('ERROR',false);}
+  S.loading=false;
+}
+
+async function refreshAllCats(){
+  if(S.loading)return;
+  const btn=document.getElementById('cats-btn');
+  if(btn){btn.disabled=true;btn.textContent='◌ UPDATING...';}
+  for(let i=0;i<CATS.length;i++)await refreshCat(i);
+  if(btn){btn.disabled=false;btn.textContent='↻ UPDATE ALL';}
+}
+
+// ═══════════════════════════════════════════
+// FINTWIT TAB
+// ═══════════════════════════════════════════
+function renderFintwit(){
+  const hasTw=Object.keys(S.tweets).length>0;
+  let h=`<div style="margin-bottom:14px"><div style="font-size:15px;font-weight:500;color:#DDE4EF">Fintwit Intelligence</div>
+    <div style="font-size:12px;color:#4A5E72;margin-top:2px">${hasTw?'✓ Real tweets via Nitter · ':''}Click any account for AI simulation grounded in live data</div></div>`;
+  if(hasTw){
+    h+=`<div style="margin-bottom:14px;padding:10px 14px;background:#0EA47212;border:1px solid #0EA47230;border-radius:8px">
+      <div style="font-size:10px;font-weight:700;color:#0EA472;font-family:monospace;letter-spacing:.1em;margin-bottom:8px">✓ REAL TWEETS — NITTER RSS — NO TWITTER API KEY NEEDED</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">`;
+    Object.entries(S.tweets).forEach(([h2,tws])=>{
+      const acc=ACCS.find(a=>a.h===h2)||{col:'#E8A020'};
+      h+=`<div style="background:#101820;border:1px solid ${acc.col}30;border-radius:8px;padding:10px 12px">
+        <div style="font-family:monospace;font-size:11px;font-weight:700;color:${acc.col};margin-bottom:8px">@${h2}</div>`;
+      tws.slice(0,3).forEach(tw=>{h+=`<div style="font-size:11px;color:#8A9AB0;padding:5px 0;border-bottom:1px solid #1A283860;line-height:1.5">${tw.slice(0,130)}</div>`;});
+      h+=`</div>`;
+    });
+    h+=`</div></div>`;
+  }
+  h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">`;
+  ACCS.forEach(acc=>{
+    h+=`<div class="card" style="padding:11px 13px;cursor:pointer" onclick="scanAccount('${acc.h}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div><div style="font-family:monospace;font-size:12px;font-weight:700;color:${acc.col}">@${acc.h}</div>
+        <div style="font-size:11px;color:#4A5E72;margin-top:1px">${acc.st}</div></div>
+        <div style="width:7px;height:7px;border-radius:50%;background:${acc.col}"></div>
+      </div>
+      <div style="font-size:12px;color:#8A9AB0;margin-bottom:8px;padding:6px 9px;background:${acc.col}12;border-left:2px solid ${acc.col};border-radius:0">${acc.call}</div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:7px">${acc.tr.map(t=>`<span style="font-size:10px;color:${acc.col}cc;background:${acc.col}12;padding:2px 5px;border-radius:3px;font-family:monospace">✓ ${t}</span>`).join('')}</div>
+      <div style="font-size:10px;color:${acc.col};font-family:monospace">→ AI SIMULATION WITH LIVE DATA</div></div>`;
+  });
+  h+=`</div><div id="fintwit-ai"></div>`;
+  document.getElementById('p-fintwit').innerHTML=h;
+}
+
+async function scanAccount(handle){
+  const acc=ACCS.find(a=>a.h===handle);if(!acc||S.loading)return;
+  if(S.llm==='none'){alert('Configure an LLM — click ⚙ LLM');return;}
+  S.loading=true;setSt('Simulating @'+handle+'...',true);
+  const out=document.getElementById('fintwit-ai');
+  out.innerHTML=`<div style="padding:14px;background:#101820;border:1px solid ${acc.col}30;border-radius:8px"><span class="sp" style="color:${acc.col}">◌</span> <span style="font-size:12px;color:#4A5E72;font-family:monospace">Simulating @${handle} with real market data...</span></div>`;
+  const liveTw=S.tweets[handle]?`\nACTUAL RECENT TWEETS FROM NITTER:\n${S.tweets[handle].join('\n')}`:'';
+  try{
+    const priceCtx=buildPriceContext();
+    const text=await callLLM(
+`${priceCtx}
+
+${buildNewsContext()}
+${liveTw}
+
+Simulate 3 posts from @${handle} (${acc.n}).
+Style: ${acc.st}
+Known for: ${acc.call}
+Current focus areas: ${acc.themes.join(', ')}
+Track record: ${acc.tr.join(', ')}
+
+CRITICAL: Use ONLY real prices from the data above. Do not invent price targets.
+If Nitter tweets are available above, use them to calibrate the voice and current focus.
+
+Each post starts with [POST]. Requirements:
+- Reference specific tickers with prices from the data (not invented)
+- Include actual data points from the prices or news sections
+- 2-4 punchy sentences in their authentic voice
+- Label when making a structural thesis point vs a data-grounded point
+
+End with [THESIS] and their 2-sentence current macro view, informed by today's real data.`,
+    buildSystemPrompt());
+    const parts=text.split(/\[POST\]|\[THESIS\]/g).filter(s=>s.trim());
+    const hasThesis=text.includes('[THESIS]');
+    let inner=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:8px"><span style="font-family:monospace;font-size:13px;font-weight:700;color:${acc.col}">@${acc.h}</span>${bdg(acc.st,acc.col)}</div>
+      <button onclick="document.getElementById('fintwit-ai').innerHTML=''" style="background:transparent;border:none;color:#4A5E72;cursor:pointer;font-size:16px">✕</button></div>`;
+    parts.forEach((p,i)=>{
+      const isT=hasThesis&&i===parts.length-1;
+      inner+=`<div style="margin-bottom:10px;padding:12px 14px;background:${isT?acc.col+'15':'#0B1118'};border:1px solid ${isT?acc.col+'40':'#1A2838'};border-radius:8px">
+        ${isT?`<div style="font-size:10px;font-weight:700;color:${acc.col};font-family:monospace;margin-bottom:5px">MACRO VIEW</div>`:''}
+        <p style="margin:0;font-size:13px;color:#B0C0D0;line-height:1.7">${p.trim().replace(/\*\*(.+?)\*\*/g,'<strong style="color:#1DBDB5">$1</strong>')}</p></div>`;
+    });
+    out.innerHTML=`<div class="fd" style="padding:16px;background:#101820;border:1px solid ${acc.col}30;border-radius:8px">${inner}</div>`;
+    setSt(null,false);
+  }catch(e){out.innerHTML=`<div style="color:#D93B3B;padding:12px;font-size:13px">⚠ ${e.message}</div>`;setSt('ERROR',false);}
+  S.loading=false;
+}
+
+// ═══════════════════════════════════════════
+// LETTER TAB
+// ═══════════════════════════════════════════
+function renderLetter(){
+  const el=document.getElementById('p-letter');if(!el)return;
+  el.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <div><div style="font-size:15px;font-weight:500;color:#DDE4EF">Daily Investor Letter</div>
+    <div style="font-size:12px;color:#4A5E72;margin-top:2px">Druckenmiller precision × real market data — no invented price levels</div></div>
+    <button class="btn" id="letter-btn" onclick="genLetter()">✦ GENERATE</button></div>
+  <div id="letter-out">${S.letter?`<div style="padding:20px;background:#101820;border:1px solid #1A2838;border-radius:8px">${md(S.letter)}</div>`:`<div style="padding:32px;text-align:center;background:#101820;border:1px solid #1A2838;border-radius:8px;color:#2E4050;font-family:monospace;font-size:12px">Load data first (↻ LOAD ALL DATA), then generate for a data-grounded daily letter</div>`}</div>`;
+}
+
+async function genLetter(){
+  if(S.loading)return;if(S.llm==='none'){alert('Configure an LLM — click ⚙ LLM');return;}
+  const btn=document.getElementById('letter-btn');const out=document.getElementById('letter-out');if(!out)return;
+  S.loading=true;if(btn){btn.disabled=true;btn.textContent='◌ WRITING...';}
+  setSt('Writing letter...',true);
+  const date=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  try{
+    const text=await callLLM(
+`${buildPriceContext()}
+
+${buildNewsContext()}
+
+Write a daily investor letter dated ${date}.
+Style: Druckenmiller directness + Marks risk awareness + Citrini macro-to-micro precision.
+Portfolio themes: CPO/Optical (LITE, COHR, SIVE, AXTI), AI Memory (PENG, MU), Space (RKLB), Robotics (OUST, VPG), Nuclear (CEG, CCJ), Packaging (BESI).
+
+CRITICAL: Use ONLY real prices from the PRICE DATA above. Label all claims as NEWS-GROUNDED or THESIS-BASED.
+
+## Macro Pulse
+(2-3 sentences. Use real price action as evidence where prices are loaded.)
+
+## Portfolio Status
+(One sentence per theme. Reference real prices if available. Label THESIS-BASED if no news.)
+
+## High Conviction Trade
+(ONE specific idea. Use real current price from the data. Do NOT invent a price if not in the data.)
+
+## Risk Radar
+(Two specific risks. Be honest about what could go wrong.)
+
+## Closing Conviction
+(One paragraph. Big picture. What would change the thesis.)
+
+— The Analyst`,
+    buildSystemPrompt());
+    S.letter=text;
+    out.innerHTML=`<div class="fd" style="padding:20px;background:#101820;border:1px solid #E8A02030;border-radius:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #1A2838">
+        <div><div style="font-family:monospace;font-size:11px;font-weight:700;color:#E8A020;letter-spacing:.1em">DAILY INTELLIGENCE LETTER</div>
+        <div style="font-size:12px;color:#4A5E72;margin-top:3px">${date}</div></div>
+        <button class="btn-sm" onclick="S.letter='';renderLetter()">↺ Regenerate</button>
+      </div><div id="letter-md"></div></div>`;
+    reveal(text,document.getElementById('letter-md'));setSt(null,false);
+  }catch(e){out.innerHTML=`<div style="color:#D93B3B;padding:16px;font-size:13px">⚠ ${e.message}</div>`;setSt('ERROR',false);}
+  if(btn){btn.disabled=false;btn.textContent='✦ GENERATE';}S.loading=false;
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+function initApp(){
+  document.getElementById('app').style.display='block';
+  const items=TKS.map(t=>t.t+' ◆').join('  ·  ');
+  const strip=document.getElementById('strip');
+  if(strip)strip.textContent=items+'  ·  '+items;
+  const lb=document.getElementById('llm-label');
+  if(lb)lb.textContent=S.llm==='groq'?'GROQ — LLAMA 3.3 70B — FREE OPEN SOURCE':S.llm==='ollama'?'OLLAMA — LOCAL — FULLY OFFLINE':'DATA-ONLY MODE';
+  renderPrices();
+  // Auto-load all data on startup
+  setTimeout(loadAll,600);
+  // Auto-refresh prices every 5 minutes
+  setInterval(()=>fetchPrices().then(()=>{if(S.tab==='prices')renderPrices();}),300000);
+}
+
+// Check existing Groq key
+if(localStorage.getItem('groq_key')){
+  S.llm='groq';
+  document.getElementById('modal').style.display='none';
+  initApp();
+}
+document.getElementById('groq-key').addEventListener('keydown',e=>{if(e.key==='Enter')saveGroq();});
+</script>
+</body>
+</html>
